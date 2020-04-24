@@ -9,7 +9,9 @@ module.exports = {
     entry: {
         popup: './popup/index.js',
         background: './background/index.js',
-        contentScripts: './contentScripts/index.js'
+        contentScripts: './contentScripts/index.js',
+        devtools: './devtools/index.js',
+        devtoolsPanel: './devtoolsPanel/index.js',
     },
     output: {
         path: path.resolve(__dirname, './../dist'),
@@ -78,7 +80,9 @@ module.exports = {
         }),
         new CopyWebpackPlugin([
             { from: 'assets', to: 'assets' },
-            { from: 'manifest.json', to: 'manifest.json', flatten: true }
+            { from: 'manifest.json', to: 'manifest.json', flatten: true },
+            { from: 'devtools.html', to: 'devtools.html' },
+            { from: 'devtoolsPanel.html', to: 'devtoolsPanel.html' },
         ])
     ]
 };

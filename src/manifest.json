@@ -9,6 +9,7 @@
         "48": "assets/icons/icon_48.png",
         "128": "assets/icons/icon_128.png"
     },
+    "homepage_url": "https://www.baidu.com",
     "background": {
         "persistent": false,
         "scripts": [
@@ -21,7 +22,8 @@
         "storage",
         "bookmarks",
         "notifications",
-        "history"
+        "history",
+        "contextMenus"
     ],
     "web_accessible_resources": [
         "element-icons.ttf",
@@ -30,7 +32,7 @@
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     "update_url": "https://clients2.google.com/service/update2/crx",
     "browser_action": {
-        "default_title": "这是一个示例Chrome插件",
+        "default_title": "这是一个 Chrome-extension Demo",
         "default_popup": "./popup.html"
     },
     "content_scripts": [
@@ -46,5 +48,6 @@
             "css": [],
             "run_at": "document_idle"
         }
-    ]
+    ],
+    "devtools_page": "devtools.html"
 }

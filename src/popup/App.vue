@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="app">
     <div class="header">
-      <p class="title" :style="{color:color}">chrome extension Demo</p>
+      <p class="title" :style="{ color: color }">chrome extension Demo</p>
       <el-color-picker
         v-model="color"
         size="mini"
@@ -10,38 +10,40 @@
         @change="handleColorChanage"
       />
     </div>
-    <div class="body" :style="{backgroundColor:color}">
-      <el-button type="primary" @click="deleteHistory">删除历史记录</el-button>
+    <div class="body" :style="{ backgroundColor: color }">
+      <el-button @click="deleteHistory">删除历史记录</el-button>
       <el-button type="primary" @click="getWeather">天气</el-button>
+      <el-button type="primary" @click="changeColor">随机颜色</el-button>
+      <el-button type="primary" @click="openNewWindow">打开百度</el-button>
       <div class="weather" v-if="weatherData.length">
         <el-collapse accordion>
           <el-collapse-item v-for="(day, index) in weatherData" :key="day.date">
             <template slot="title">
               <div style="padding-left: 10px;">
-                {{day.date}} {{day.week}}
-                <span>风速：{{day.win_speed}}</span>
-                <span style="color: blue">天气：{{day.wea}}</span>
+                {{ day.date }} {{ day.week }}
+                <span>风速：{{ day.win_speed }}</span>
+                <span style="color: blue">天气：{{ day.wea }}</span>
               </div>
             </template>
             <div v-if="index === 0" style="padding-left: 10px;">
               <p>
                 <span style="color: red;">空气质量</span>
-                ：{{day.air_level}}
+                ：{{ day.air_level }}
               </p>
               <p>
                 <span style="color: red;">活动Tips</span>
-                ：{{day.air_tips}}
+                ：{{ day.air_tips }}
               </p>
             </div>
             <div v-else style="padding-left: 10px;"></div>
             <div style="padding-left: 10px;">
-              <p style="color: red;">风速详情：{{day.win.join('、')}}</p>
+              <p style="color: red;">风速详情：{{ day.win.join("、") }}</p>
               <p class="index" v-for="(h, i) in day.index" :key="i">
                 <span style="color: red;">
-                  {{gtitle(h.title)}}
-                  </span>
-                ： {{h.level || '-'}}
-                <span class="desc">({{h.desc || '-'}})</span>
+                  {{ gtitle(h.title) }}
+                </span>
+                ： {{ h.level || "-" }}
+                <span class="desc">({{ h.desc || "-" }})</span>
               </p>
             </div>
           </el-collapse-item>
@@ -53,6 +55,7 @@
 
 <script>
 import request from "../utils/request";
+import { randomColor } from "../utils/other";
 import moment from "moment";
 export default {
   data() {
@@ -68,36 +71,58 @@ export default {
         "hsv(51, 100, 98)",
         "hsva(120, 40, 94, 0.5)",
         "hsla(181, 100%, 37%,  0.73)",
-        "#c7158577"
+        "#c7158577",
       ],
-      weatherData: []
+      weatherData: [],
     };
   },
   methods: {
+    sendMessageToContentScript(message, callback) {
+      chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, message, function(response) {
+          if (callback) callback(response);
+        });
+      });
+    },
     deleteHistory() {
-      this.$confirm("此操作将删除所有历史记录, 是否继续?", "提示", {
+      this.$confirm("此操作将删除所有历史记录, 是否继续? 慎重!", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning"
+        type: "warning",
       })
         .then(() => {
-          chrome.history.deleteAll(result => {
+          chrome.history.deleteAll((result) => {
             this.$message({
               type: "success",
-              message: "删除成功!"
+              message: "删除成功!",
             });
           });
         })
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消删除",
           });
         });
     },
+    changeColor() {
+      this.color = randomColor();
+      this.sendMessageToContentScript(
+        { cmd: "changeColor", value: this.color },
+        function(response) {
+          console.log("popup：" + response);
+        }
+      );
+    },
+    openNewWindow() {
+      // 新窗口
+      // chrome.windows.create({url: "https://www.baidu.com/",state: "maximized"});
+      // 新标签页
+      chrome.tabs.create({url: 'https://www.baidu.com'});
+    },
     handleColorChanage(color) {
       // 保存主题信息
-      chrome.storage.sync.set({ theme: color }, res => {
+      chrome.storage.sync.set({ theme: color }, (res) => {
         console.log("颜色保存成功");
       });
     },
@@ -111,20 +136,21 @@ export default {
             version: "v1",
             appid: 1001,
             appsecret: appsecret,
-            cityId: "101210101"
-          }
+            cityId: "101210101",
+          },
         }
-      ).catch(e => e);
+      ).catch((e) => e);
+      // debugger;
       if (errcode) {
         this.$message({
           type: "error",
-          message: errmsg
+          message: errmsg,
         });
       }
       if (Array.isArray(data)) {
         this.weatherData = data;
       }
-    }
+    },
   },
   created() {
     // 读取 主题信息
@@ -135,17 +161,17 @@ export default {
       this.color = theme;
     });
     // 读取 书签信息
-    chrome.bookmarks.getTree(data => {
+    chrome.bookmarks.getTree((data) => {
       console.log(data);
     });
   },
   computed: {
-    gtitle(){
-      return (t)=>{
-        return t === "</em><em></em><em></em><em>" ? '运动指数' : t
-      }
-    }
-  }
+    gtitle() {
+      return (t) => {
+        return t === "</em><em></em><em></em><em>" ? "运动指数" : t;
+      };
+    },
+  },
 };
 </script>
 

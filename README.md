@@ -3,7 +3,7 @@
 ## 说明
 
 
-### 本地开发 
+### 本地开发
 ```bash
 
 npm run dev
@@ -12,8 +12,9 @@ npm run dev
 
 
 访问 chrome://extensions ，开启 "开发者模式"，加载已解压的扩展程序，文件夹路径指向 dist/
+新启动插件,简易刷新页面
 
-### 提交前打包 
+### 提交前打包
 ```bash
 
 npm run build
@@ -26,6 +27,7 @@ npm run build
 - [x] [Element](https://element.eleme.cn/#/zh-CN)
 - [x] [Webpack](https://webpack.github.io)
 - [x] [Babel](https://babeljs.io/)
+- [x] [extensions(官方)](https://developer.chrome.com/extensions)
 - [x] [chrome扩展程序(非官方中文版)](http://www.kkh86.com/it/chrome-extension-doc/extensions/getstarted.html)
-- [x] [chrome  扩展程序 ](https://www.cnblogs.com/liuxianan/p/chrome-plugin-develop.html#manifestjson)
+- [x] [chrome  扩展程序 ](https://www.cnblogs.com/liuxianan/p/chrome-plugin-develop.html)
 
